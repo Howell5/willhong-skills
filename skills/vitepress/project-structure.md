@@ -5,6 +5,7 @@
 ```
 {project-name}/
 ├── package.json
+├── pnpm-workspace.yaml       # REQUIRED if inside another pnpm workspace
 ├── README.md
 ├── .gitignore
 └── docs/
@@ -18,6 +19,17 @@
         ├── index.md
         └── {topic}.md
 ```
+
+## pnpm-workspace.yaml
+
+**CRITICAL**: When creating inside an existing pnpm workspace, ALWAYS create this file to make the tutorial project independent:
+
+```yaml
+# Independent workspace - prevents inheriting parent config
+packages: []
+```
+
+This prevents pnpm from inheriting the parent workspace configuration, which can cause ESM compatibility issues with VitePress.
 
 ## package.json
 
@@ -42,6 +54,10 @@
   }
 }
 ```
+
+**Important notes:**
+- `"type": "module"` is REQUIRED for VitePress ESM compatibility
+- `pnpm.onlyBuiltDependencies` prevents unnecessary native module builds
 
 ## .gitignore
 

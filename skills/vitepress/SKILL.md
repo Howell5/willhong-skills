@@ -14,79 +14,138 @@ This skill creates standalone VitePress tutorial sites that teach developers how
 ## Usage
 
 ```
-/vitepress-tutorial [source-path] [output-path]
+/vitepress-tutorial [task-description]
 ```
 
 **Examples:**
-- `/vitepress-tutorial ./apps/runner ./tutorials/runner-guide`
-- `/vitepress-tutorial ./pkg/sandbox`
+- `/vitepress-tutorial 帮我解析这个仓库的架构`
+- `/vitepress-tutorial explain the agent system in detail`
 
 ## Workflow
 
-### Phase 1: Analysis
+### Phase 1: Project Analysis & Setup (REQUIRED FIRST)
 
-1. Explore the specified source directory
+1. **Detect project type** - Identify language, framework, monorepo structure
+2. **Ask user for output location** - Use AskUserQuestion tool to confirm:
+   - Output directory path (suggest reasonable default based on project structure)
+   - Tutorial focus areas (if not specified in the task)
+3. **Create project skeleton immediately** - After user confirms location:
+   - Create directory structure
+   - Write `package.json` with Mermaid plugin
+   - Write `.vitepress/config.ts`
+   - Write `pnpm-workspace.yaml` (if inside another workspace)
+   - Run `pnpm install`
+
+### Phase 2: Deep Analysis
+
+1. Explore source directory using Task tool with Explore agent
 2. Identify key components, patterns, and architecture
 3. Map dependencies and data flows
-4. Output: Module inventory and architecture overview
+4. Build mental model of module interactions
 
-**User checkpoint**: Confirm scope and focus areas
+### Phase 3: Content Generation
 
-### Phase 2: Planning
+1. Generate all documentation files based on analysis
+2. Include Mermaid diagrams for architecture visualization
+3. Reference actual source code with file:line annotations
+4. Build and verify the site works
 
-1. Generate tutorial outline based on analysis
-2. Determine chapter structure and navigation
-3. Identify code sections to highlight
-4. Output: Tutorial structure document
+## CRITICAL INSTRUCTIONS
 
-**User checkpoint**: Approve outline before generation
+### Ask Before Writing
 
-### Phase 3: Generation
+**ALWAYS use AskUserQuestion to confirm output location before creating any files:**
 
-1. Create VitePress project skeleton using @project-structure.md
-2. Configure VitePress using @config-template.md
-3. Generate tutorial content following @content-guidelines.md
-4. Build and verify
+```
+Question: "Where should I create the VitePress tutorial site?"
+Options:
+- "./docs" (project docs folder)
+- "./tutorials/{project-name}" (dedicated tutorials folder)
+- Custom path...
+```
+
+### Standalone Project Setup
+
+When creating inside an existing pnpm workspace, ALWAYS create these files to make it independent:
+
+**pnpm-workspace.yaml** (in tutorial root):
+```yaml
+# Independent workspace - prevents inheriting parent config
+packages: []
+```
+
+**package.json** (MUST include):
+```json
+{
+  "name": "{tutorial-name}",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "mermaid": "^11.4.0",
+    "vitepress": "^1.6.3",
+    "vitepress-plugin-mermaid": "^2.0.17"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
+  }
+}
+```
+
+### Config with Mermaid
+
+**docs/.vitepress/config.ts** (MUST use withMermaid wrapper):
+```typescript
+import { defineConfig } from 'vitepress'
+import { withMermaid } from 'vitepress-plugin-mermaid'
+
+export default withMermaid(defineConfig({
+  // ... config
+  mermaid: {
+    theme: 'default'
+  }
+}))
+```
+
+### Install Dependencies
+
+After creating project files, ALWAYS run:
+```bash
+cd {output-path} && pnpm install
+```
 
 ## Output Structure
 
 ```
 {output-path}/
-├── package.json
-├── docs/
-│   ├── .vitepress/
-│   │   └── config.ts
-│   ├── index.md              # Homepage
-│   ├── introduction/
-│   │   ├── overview.md       # Project overview
-│   │   └── architecture.md   # Architecture diagram
-│   └── {modules}/            # One directory per module
-│       ├── index.md
-│       └── {topics}.md
-└── README.md
+├── package.json              # With mermaid plugin
+├── pnpm-workspace.yaml       # If inside another workspace
+├── README.md
+└── docs/
+    ├── .vitepress/
+    │   └── config.ts         # With withMermaid wrapper
+    ├── index.md              # Homepage
+    ├── introduction/
+    │   ├── overview.md       # Project overview
+    │   └── architecture.md   # Architecture diagram
+    └── {modules}/            # One directory per module
+        ├── index.md
+        └── {topics}.md
 ```
 
 ## Features
 
+- **Mermaid Diagrams**: Architecture, sequence, and flow diagrams (auto-installed)
 - **Source References**: Auto-generate `Source: path/to/file.go:123` annotations
-- **Mermaid Diagrams**: Architecture, sequence, and flow diagrams
 - **Code Highlighting**: Go, TypeScript, Python with line highlighting
 - **Chinese-first**: Content in Chinese, code comments in English
 - **Standalone Deploy**: Ready for Vercel, Netlify, or GitHub Pages
 
-## Configuration
-
-The skill reads project context to customize output:
-
-| Context | Effect |
-|---------|--------|
-| Go project | Uses Go code blocks, references `.go` files |
-| TypeScript | Uses TS blocks, references `.ts/.tsx` files |
-| Monorepo | Detects `apps/`, `packages/` structure |
-
-## Instructions
-
-When executing this skill:
+## Content Guidelines
 
 1. **Always explore first** - Read source files before writing tutorials
 2. **Reference actual code** - Include real code snippets with file paths
@@ -94,3 +153,9 @@ When executing this skill:
 4. **Keep chapters focused** - One concept per file, ~200-400 lines
 5. **Link between chapters** - Use VitePress prev/next navigation
 6. **Include API tables** - Summarize endpoints, functions, types
+
+## Supporting Files
+
+- @config-template.md - VitePress configuration template
+- @project-structure.md - Project structure and file templates
+- @content-guidelines.md - Content writing guidelines
