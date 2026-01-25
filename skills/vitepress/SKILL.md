@@ -104,12 +104,20 @@ import { defineConfig } from 'vitepress'
 import { withMermaid } from 'vitepress-plugin-mermaid'
 
 export default withMermaid(defineConfig({
-  // ... config
+  // CRITICAL: Fix Mermaid's dayjs ESM compatibility issue
+  vite: {
+    optimizeDeps: {
+      include: ['mermaid', 'dayjs']
+    }
+  },
+  // ... rest of config
   mermaid: {
     theme: 'default'
   }
 }))
 ```
+
+**Why `vite.optimizeDeps`?** Mermaid depends on dayjs which is a CommonJS module. Without this config, Vite dev server will throw "does not provide an export named 'default'" error.
 
 ### Install Dependencies
 

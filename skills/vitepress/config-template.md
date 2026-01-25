@@ -7,6 +7,14 @@ import { defineConfig } from 'vitepress'
 import { withMermaid } from 'vitepress-plugin-mermaid'
 
 export default withMermaid(defineConfig({
+  // CRITICAL: Vite optimization for Mermaid's CJS dependencies (dayjs)
+  // Without this, you'll get ESM import errors in dev mode
+  vite: {
+    optimizeDeps: {
+      include: ['mermaid', 'dayjs']
+    }
+  },
+
   // Site metadata
   title: '{Project Title}',
   description: '{Project description}',
