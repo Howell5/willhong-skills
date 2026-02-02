@@ -13,6 +13,7 @@ npx skills add Howell5/willhong-skills
 | Skill | Description |
 |-------|-------------|
 | [vitepress-tutorial](#vitepress-tutorial) | Generate VitePress documentation sites for source code learning |
+| [social-polish](#social-polish) | 从核心观点生成优质社媒长文，运用 4D 框架分析，去 AI 味，6 维度评审 |
 
 ---
 
@@ -62,6 +63,33 @@ Generate VitePress documentation sites for source code learning and analysis. Un
 │       └── {topics}.md
 └── README.md
 ```
+
+---
+
+### social-polish
+
+从核心观点生成可直接发布的优质社媒长文。通过 4D 框架深度分析、去 AI 味处理、6 维度评审，确保输出的内容观点鲜明、情感共鸣、语言自然。
+
+```bash
+/social-polish [你的核心观点或选题]
+```
+
+**示例：**
+
+```bash
+/social-polish 为什么大多数人学不会编程
+/social-polish 远程工作三年后我发现的真相
+/social-polish 年轻人为什么越来越不想结婚
+```
+
+**特性：**
+
+- 4D 框架分析：哲学、心理学、传播学、社会学四维度拆解选题
+- 去 AI 味处理：删除空洞过渡词、模板化开头、说教式结尾
+- 6 维度评审：观点独特性、情感共鸣度、结构清晰度、语言自然度、信息密度、传播潜力
+- 自动迭代：低于 54/60 分自动修订，最多 3 轮
+
+**适用平台：** X 长推、小红书图文、微信公众号、即刻等
 
 ## License
 
