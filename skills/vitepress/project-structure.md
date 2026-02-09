@@ -2,6 +2,7 @@
 
 ## Directory Layout
 
+### Single Language
 ```
 {project-name}/
 ├── package.json
@@ -18,6 +19,33 @@
     └── {module}/
         ├── index.md
         └── {topic}.md
+```
+
+### Two Languages (i18n)
+```
+{project-name}/
+├── package.json
+├── pnpm-workspace.yaml
+├── README.md
+├── .gitignore
+└── docs/
+    ├── .vitepress/
+    │   └── config.ts          # With locales config
+    ├── index.md               # Default locale homepage
+    ├── introduction/          # Default locale content
+    │   ├── overview.md
+    │   └── architecture.md
+    ├── {module}/
+    │   ├── index.md
+    │   └── {topic}.md
+    └── {locale}/              # Second locale (e.g. "en", "zh", "ja", "ko")
+        ├── index.md
+        ├── introduction/
+        │   ├── overview.md
+        │   └── architecture.md
+        └── {module}/
+            ├── index.md
+            └── {topic}.md
 ```
 
 ## pnpm-workspace.yaml

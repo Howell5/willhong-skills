@@ -26,10 +26,11 @@ This skill creates standalone VitePress tutorial sites that teach developers how
 ### Phase 1: Project Analysis & Setup (REQUIRED FIRST)
 
 1. **Detect project type** - Identify language, framework, monorepo structure
-2. **Ask user for output location** - Use AskUserQuestion tool to confirm:
+2. **Ask user for preferences** - Use AskUserQuestion tool to confirm:
    - Output directory path (suggest reasonable default based on project structure)
    - Tutorial focus areas (if not specified in the task)
-3. **Create project skeleton immediately** - After user confirms location:
+   - **Content language(s)** - Which language(s) to generate content in (see Language Selection below)
+3. **Create project skeleton immediately** - After user confirms:
    - Create directory structure
    - Write `package.json` with Mermaid plugin
    - Write `.vitepress/config.ts`
@@ -54,15 +55,37 @@ This skill creates standalone VitePress tutorial sites that teach developers how
 
 ### Ask Before Writing
 
-**ALWAYS use AskUserQuestion to confirm output location before creating any files:**
+**ALWAYS use AskUserQuestion to confirm output location AND content language before creating any files.**
+
+Use two questions in one AskUserQuestion call:
 
 ```
-Question: "Where should I create the VitePress tutorial site?"
+Question 1: "Where should I create the VitePress tutorial site?"
 Options:
 - "./docs" (project docs folder)
 - "./tutorials/{project-name}" (dedicated tutorials folder)
 - Custom path...
+
+Question 2: "What language(s) should the tutorial content be written in? (Max 2)"
+multiSelect: true
+Options:
+- "中文 (Chinese)" - Content in Chinese, code comments in English
+- "English" - Content and code comments in English
+- "日本語 (Japanese)" - Content in Japanese, code comments in English
+- "한국어 (Korean)" - Content in Korean, code comments in English
 ```
+
+### Language Selection Rules
+
+- **Max 2 languages** - If user selects more than 2, ask them to narrow down. Mention they can run the skill again later to add more languages.
+- **Single language** - Generate content directly under `docs/` with no locale prefix. Set `lang` in config accordingly.
+- **Two languages** - Use VitePress i18n with locale-based directory structure:
+  - First selected language → root `/` (default locale)
+  - Second selected language → `/{locale-code}/` prefix
+  - Configure `locales` in `.vitepress/config.ts` with proper labels and nav/sidebar for each locale
+  - Add language switcher in navbar automatically
+- **Language-to-locale mapping**: `zh-CN` (Chinese), `en-US` (English), `ja` (Japanese), `ko` (Korean)
+- **Content language only affects prose** - Code snippets, file paths, and technical terms stay in English regardless of content language
 
 ### Standalone Project Setup
 
@@ -128,6 +151,7 @@ cd {output-path} && pnpm install
 
 ## Output Structure
 
+### Single Language
 ```
 {output-path}/
 ├── package.json              # With mermaid plugin
@@ -145,12 +169,38 @@ cd {output-path} && pnpm install
         └── {topics}.md
 ```
 
+### Two Languages (i18n)
+```
+{output-path}/
+├── package.json
+├── pnpm-workspace.yaml
+├── README.md
+└── docs/
+    ├── .vitepress/
+    │   └── config.ts         # With locales config + withMermaid
+    ├── index.md              # Default locale homepage
+    ├── introduction/         # Default locale content
+    │   ├── overview.md
+    │   └── architecture.md
+    ├── {modules}/
+    │   ├── index.md
+    │   └── {topics}.md
+    └── {locale}/             # e.g. "en" or "zh"
+        ├── index.md          # Second locale homepage
+        ├── introduction/
+        │   ├── overview.md
+        │   └── architecture.md
+        └── {modules}/
+            ├── index.md
+            └── {topics}.md
+```
+
 ## Features
 
 - **Mermaid Diagrams**: Architecture, sequence, and flow diagrams (auto-installed)
 - **Source References**: Auto-generate `Source: path/to/file.go:123` annotations
 - **Code Highlighting**: Go, TypeScript, Python with line highlighting
-- **Chinese-first**: Content in Chinese, code comments in English
+- **Multi-language Support**: Choose up to 2 languages per run (Chinese, English, Japanese, Korean). Run again to add more languages later.
 - **Standalone Deploy**: Ready for Vercel, Netlify, or GitHub Pages
 
 ## Content Guidelines

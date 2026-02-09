@@ -239,9 +239,10 @@ result, _ := doSomething()
 ## Writing Style
 
 ### Language
-- **Content**: Chinese (Simplified)
-- **Code comments**: English
+- **Content**: Write in the language(s) selected by the user during setup
+- **Code comments**: Always in English, regardless of content language
 - **Technical terms**: Keep in English (API, Docker, Daemon, etc.)
+- **When generating two languages**: Produce the same content structure for both locales — same diagrams, same code blocks, only prose translated
 
 ### Tone
 - Direct and technical
@@ -298,4 +299,4 @@ Before completing a chapter:
 - [ ] Code blocks have language specified
 - [ ] Summary section at end
 - [ ] No orphan links
-- [ ] Chinese content, English code comments
+- [ ] Content in user's selected language(s), code comments in English

@@ -15,10 +15,10 @@ export default withMermaid(defineConfig({
     }
   },
 
-  // Site metadata
+  // Site metadata - set lang based on user's selected default language
   title: '{Project Title}',
   description: '{Project description}',
-  lang: 'zh-CN',
+  lang: '{locale-code}',  // e.g. 'zh-CN', 'en-US', 'ja', 'ko'
 
   // Build output
   outDir: '../dist',
@@ -165,6 +165,62 @@ export default withMermaid(defineConfig({
   }
 }))
 ```
+
+## i18n Configuration (Two Languages)
+
+When user selects 2 languages, add `locales` to the config. The first selected language is the root locale, the second gets a path prefix.
+
+```typescript
+export default withMermaid(defineConfig({
+  // ... vite, mermaid config same as above
+
+  locales: {
+    // Root locale (first selected language)
+    root: {
+      label: '{Language Label}',  // e.g. '中文', 'English'
+      lang: '{locale-code}',     // e.g. 'zh-CN', 'en-US'
+      title: '{Project Title}',
+      description: '{Description}',
+      themeConfig: {
+        nav: [/* localized nav */],
+        sidebar: {/* localized sidebar */},
+        outline: { label: '{localized}' },
+        docFooter: { prev: '{localized}', next: '{localized}' },
+      }
+    },
+    // Second locale
+    '{locale-path}': {  // e.g. 'en', 'zh', 'ja', 'ko'
+      label: '{Language Label}',
+      lang: '{locale-code}',
+      title: '{Project Title}',
+      description: '{Description}',
+      themeConfig: {
+        nav: [/* localized nav */],
+        sidebar: {/* localized sidebar with /{locale-path}/ prefix in links */},
+        outline: { label: '{localized}' },
+        docFooter: { prev: '{localized}', next: '{localized}' },
+      }
+    }
+  },
+
+  themeConfig: {
+    // Shared config (socialLinks, search, etc.)
+    socialLinks: [
+      { icon: 'github', link: '{github-url}' }
+    ],
+    search: { provider: 'local' },
+  }
+}))
+```
+
+### Locale UI Labels Reference
+
+| Locale | Outline | Prev | Next | Search |
+|--------|---------|------|------|--------|
+| `zh-CN` | 目录 | 上一页 | 下一页 | 搜索 |
+| `en-US` | Table of Contents | Previous | Next | Search |
+| `ja` | 目次 | 前へ | 次へ | 検索 |
+| `ko` | 목차 | 이전 | 다음 | 검색 |
 
 ## Configuration Variables
 
