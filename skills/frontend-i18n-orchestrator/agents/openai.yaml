@@ -1,0 +1,7 @@
+interface:
+  display_name: "Frontend i18n"
+  short_description: "Auto-detect and migrate frontend i18n quickly."
+  default_prompt: "Use $frontend-i18n-orchestrator to internationalize this frontend project end-to-end with auto-detection and minimal decision prompts."
+
+policy:
+  allow_implicit_invocation: true
