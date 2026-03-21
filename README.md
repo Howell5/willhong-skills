@@ -14,6 +14,7 @@ npx skills add Howell5/willhong-skills
 |-------|-------------|
 | [vitepress-tutorial](#vitepress-tutorial) | Generate VitePress documentation sites for source code learning |
 | [social-polish](#social-polish) | 从核心观点生成优质社媒长文，运用 4D 框架分析，去 AI 味，6 维度评审 |
+| [frontend-i18n-orchestrator](#frontend-i18n-orchestrator) | Frontend 项目 i18n 全链路编排：自动探测、最少提问、分阶段改造与质量门禁 |
 
 ---
 
@@ -90,6 +91,24 @@ Generate VitePress documentation sites for source code learning and analysis. Un
 - 自动迭代：低于 54/60 分自动修订，最多 3 轮
 
 **适用平台：** X 长推、小红书图文、微信公众号、即刻等
+
+---
+
+### frontend-i18n-orchestrator
+
+面向 React/Vue/Next/Nuxt/Vite 的项目级 i18n 改造 skill。默认先自动扫描项目，再只询问无法自动推断的业务决策，最后分阶段完成迁移与验证。
+
+```bash
+/frontend-i18n-orchestrator
+```
+
+**特性：**
+
+- Auto-first：先探测框架、现有 i18n 状态、文案热点，再提问
+- Ask-on-ambiguity：仅在业务策略不明确时提问（目标语言、URL 策略、fallback 等）
+- 分阶段执行：基建 -> 文案迁移 -> 本地化格式 -> 路由/SEO -> CI 治理
+- 质量门禁：缺 key、孤儿 key、硬编码回归检查
+- Claude Code 与 Codex 双端兼容
 
 ## License
 

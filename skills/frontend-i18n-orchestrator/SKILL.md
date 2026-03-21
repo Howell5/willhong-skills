@@ -1,6 +1,6 @@
 ---
 name: frontend-i18n-orchestrator
-description: End-to-end i18n orchestration for frontend repositories. Use when a user wants to internationalize React/Vue/Next/Nuxt/Vite projects with minimal questions: auto-detect stack and current i18n state, ask only unresolved business decisions, migrate hardcoded strings to locale keys, localize formatting and routing/SEO, and enforce CI quality gates.
+description: "End-to-end i18n orchestration for frontend repositories. Use when a user wants to internationalize React/Vue/Next/Nuxt/Vite projects with minimal questions: auto-detect stack and current i18n state, ask only unresolved business decisions, migrate hardcoded strings to locale keys, localize formatting and routing/SEO, and enforce CI quality gates."
 ---
 
 # Frontend I18n Orchestrator
