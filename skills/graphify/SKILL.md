@@ -1,101 +1,65 @@
 ---
 name: graphify
-description: "Build and query a code navigation graph for the current project. Extracts AST structure (classes, functions, imports, calls) from 12 languages via tree-sitter WASM. Use when exploring unfamiliar code, before searching, or after editing files. Trigger: /graphify"
+description: "Use when exploring unfamiliar codebases, before searching for code, or after editing files. Builds a structural AST index (classes, functions, imports, call graph) from 12 languages via tree-sitter. Trigger: /graphify"
+allowed-tools: Bash(graphify:*), Bash(npx graphify-ts:*)
 ---
 
 # graphify — Code Navigation Layer
 
-A structural index of the codebase. Extracts AST structure from 12 languages via tree-sitter, builds a queryable knowledge graph, and keeps it in sync as you edit code.
+Structural index of the codebase. Know what exists, where, and how it connects — before you grep.
 
-## Setup (one-time)
-
-Before first use, install dependencies in the skill directory:
-
-```bash
-cd <skill_dir> && bun install
-```
-
-This downloads tree-sitter WASM grammars (~30MB). Only needed once.
+Requires CLI: `npm i -g graphify-ts` (uses Bun runtime).
 
 ## Commands
 
 ### `/graphify` or `/graphify build`
 
-Build a full index of the current directory.
-
 ```bash
-cd <skill_dir> && bun run src/index.ts build <project_dir>
+graphify build .
 ```
 
-1. Scans all supported source files (Python, JS/TS, Go, Rust, Java, C/C++, Ruby, C#, Kotlin, Scala, PHP)
-2. Extracts AST structure: classes, functions, imports, call graph, inheritance
-3. Saves graph to `graphify-out/graph.json`
+Scans all source files, extracts AST structure, saves to `graphify-out/graph.json`.
 
-After building, report: "Indexed {files} files, {nodes} symbols, {edges} relationships"
+Report: "Indexed {files} files, {nodes} symbols, {edges} relationships"
 
-### `/graphify query <question>`
+### `/graphify query <name>`
 
-Search the graph for symbols matching the question.
+```bash
+graphify query graphify-out/graph.json <name>
+```
 
-1. Load `graphify-out/graph.json`
-2. Use `findSymbol()` for name lookup, `callersOf()`/`calleesOf()` for call graph, `fileSymbols()` for file contents, `shortestPath()` for connections
-3. Return matching symbols with file locations
+Search for symbols by name. Returns matching symbols with file locations.
 
-### `/graphify update <file1> [file2...]`
+### `/graphify update <files...>`
 
-Incrementally update the graph after editing files.
+```bash
+graphify update graphify-out/graph.json <file1> [file2...]
+```
 
-1. Load existing `graphify-out/graph.json`
-2. Re-extract only the specified files
-3. Merge changes back into the graph
-4. Report diff: "Added N nodes, removed M nodes"
+Re-extract only the changed files and merge back. Report the diff.
 
-### `/graphify label`
+## When to Use
 
-Assign semantic domain labels to code symbols. Analyze each symbol's name, context, and neighbors to assign labels like "authentication", "database", "api".
+**Before searching code:** If `graphify-out/graph.json` exists, query it before Glob or Grep. The graph tells you which files contain which symbols.
 
-You (the agent) are the labeler — no external API calls needed.
+**After editing code:** Run `/graphify update <changed-files>` to keep the index current.
+
+**Exploring unfamiliar code:** Run `/graphify query <concept>` to find entry points without guessing filenames.
 
 ## Supported Languages
 
 Python, JavaScript, TypeScript (JSX/TSX), Go, Rust, Java, C, C++, Ruby, C#, Kotlin, Scala, PHP
 
-## How to Use This
+## Graph Output
 
-### Before searching code
-
-If `graphify-out/graph.json` exists, check it before running Glob or Grep. The graph tells you which files contain which symbols, saving blind keyword searches.
-
-### After editing code
-
-When you finish editing files, run `/graphify update <changed-files>` to keep the navigation layer current.
-
-### Exploring unfamiliar code
-
-Use `/graphify query <concept>` to find entry points. Use `callersOf` to trace who uses a function. Use `shortestPath` to understand how two modules connect.
-
-## Graph Schema
+Saved as `graphify-out/graph.json`:
 
 ```json
 {
-  "nodes": [
-    { "id": "file::main", "label": "main.py", "fileType": "code", "sourceFile": "main.py", "sourceLocation": "main.py:1" },
-    { "id": "main::app", "label": "App", "fileType": "code", "sourceFile": "main.py", "sourceLocation": "main.py:5" }
-  ],
-  "edges": [
-    { "source": "file::main", "target": "main::app", "relation": "contains", "confidence": "EXTRACTED" }
-  ],
-  "metadata": { "files": 10, "nodes": 45, "edges": 62, "builtAt": "2026-04-09T..." }
+  "nodes": [{ "id": "main::app", "label": "App", "sourceFile": "main.py", "sourceLocation": "main.py:5" }],
+  "edges": [{ "source": "file::main", "target": "main::app", "relation": "contains", "confidence": "EXTRACTED" }],
+  "metadata": { "files": 10, "nodes": 45, "edges": 62 }
 }
 ```
 
-### Edge Relations
-
-| Relation | Confidence | Meaning |
-|----------|-----------|---------|
-| `contains` | EXTRACTED | File contains a class/function |
-| `method` | EXTRACTED | Class contains a method |
-| `imports` | EXTRACTED | File imports a module |
-| `imports_from` | EXTRACTED | File imports names from a module |
-| `inherits` | EXTRACTED | Class inherits from another |
-| `calls` | INFERRED | Function calls another function |
+Edge relations: `contains`, `method`, `imports`, `imports_from`, `calls` (INFERRED), `inherits`

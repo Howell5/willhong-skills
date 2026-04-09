@@ -37,7 +37,7 @@ Code navigation layer for AI coding agents. Extracts AST structure from 12 progr
 - Call graph, inheritance, import relationships
 - Optional semantic labeling (agent-driven, no API key)
 
-**Setup:** Requires `bun` runtime. Run `bun install` in the skill directory on first use.
+**Setup:** `npm i -g graphify-ts` (requires [Bun](https://bun.sh) runtime)
 
 **Source:** [github.com/Howell5/graphify-ts](https://github.com/Howell5/graphify-ts)
 
