@@ -12,9 +12,34 @@ npx skills add Howell5/willhong-skills
 
 | Skill | Description |
 |-------|-------------|
+| [graphify](#graphify) | Code navigation layer for AI agents — AST extraction from 12 languages, queryable knowledge graph |
 | [vitepress-tutorial](#vitepress-tutorial) | Generate VitePress documentation sites for source code learning |
 | [social-polish](#social-polish) | 从核心观点生成优质社媒长文，运用 4D 框架分析，去 AI 味，6 维度评审 |
 | [frontend-i18n-orchestrator](#frontend-i18n-orchestrator) | Frontend 项目 i18n 全链路编排：自动探测、最少提问、分阶段改造与质量门禁 |
+
+---
+
+### graphify
+
+Code navigation layer for AI coding agents. Extracts AST structure from 12 programming languages via tree-sitter WASM, builds a queryable knowledge graph, and keeps it in sync as code changes.
+
+```bash
+/graphify build         # index the current project
+/graphify query <name>  # find symbols by name
+/graphify update <file> # re-index after editing
+```
+
+**Features:**
+
+- 12 languages: Python, JS/TS, Go, Rust, Java, C/C++, Ruby, C#, Kotlin, Scala, PHP
+- Deterministic AST extraction via tree-sitter WASM — no LLM needed for structure
+- Incremental updates — only re-extracts changed files
+- Call graph, inheritance, import relationships
+- Optional semantic labeling (agent-driven, no API key)
+
+**Setup:** Requires `bun` runtime. Run `bun install` in the skill directory on first use.
+
+**Source:** [github.com/Howell5/graphify-ts](https://github.com/Howell5/graphify-ts)
 
 ---
 
